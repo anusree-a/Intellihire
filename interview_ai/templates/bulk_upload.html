@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bulk Upload Candidates</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn {
+            margin-top: 20px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        input[type="file"] {
+            margin-top: 20px;
+        }
+
+        a {
+            display: block;
+            margin-top: 20px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>📂 Upload Excel File</h2>
+        <p>Upload candidate list (Name, Email, Phone)</p>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="excel_file" accept=".xlsx" required>
+            <br>
+            <button type="submit" class="btn">
+                Upload & Send Invitations
+            </button>
+        </form>
+
+        <a href="{% url 'hr_dashboard' %}">⬅ Back to Dashboard</a>
+    </div>
+</body>
+</html>

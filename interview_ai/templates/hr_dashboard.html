@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard - AI Interview System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header h1 { font-size: 2em; margin-bottom: 5px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 30px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center; }
+        .stat-number { font-size: 3em; font-weight: bold; color: #667eea; margin-bottom: 10px; }
+        .stat-label { font-size: 1.1em; color: #6c757d; text-transform: uppercase; letter-spacing: 1px; }
+        .actions { margin-bottom: 30px; }
+        .btn { padding: 15px 30px; border: none; border-radius: 10px; font-size: 1em; cursor: pointer; transition: all 0.3s; font-weight: bold; text-decoration: none; display: inline-block; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+        .interviews-table { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden; }
+        .table-header { padding: 20px 30px; background: #f8f9fa; border-bottom: 2px solid #e9ecef; }
+        .table-header h2 { font-size: 1.5em; color: #212529; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 18px 20px; text-align: left; border-bottom: 1px solid #e9ecef; }
+        th { background: #f8f9fa; font-weight: bold; color: #495057; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px; }
+        tr:hover { background: #f8f9fa; }
+        .status-badge { padding: 5px 15px; border-radius: 20px; font-size: 0.85em; font-weight: bold; text-transform: uppercase; }
+        .status-created { background: #e3f2fd; color: #1976d2; }
+        .status-in-progress { background: #fff3e0; color: #f57c00; }
+        .status-completed { background: #e8f5e9; color: #388e3c; }
+        .status-terminated { background: #ffebee; color: #d32f2f; }
+        .status-cancelled { background: #f3e5f5; color: #7b1fa2; }
+        .score-badge { font-weight: bold; font-size: 1.2em; }
+        .score-high { color: #28a745; }
+        .score-medium { color: #ffc107; }
+        .score-low { color: #dc3545; }
+        .action-buttons { display: flex; align-items: center; gap: 8px; }
+        .action-btn { padding: 6px 14px; border-radius: 8px; font-size: 0.85em; font-weight: 600; text-decoration: none; display: inline-block; transition: all 0.2s; white-space: nowrap; }
+        .action-btn-view { background: #eff1ff; color: #667eea; border: 1px solid #c5ccf7; }
+        .action-btn-view:hover { background: #667eea; color: white; }
+        .action-btn-edit { background: #fff8f0; color: #e65100; border: 1px solid #ffcc80; }
+        .action-btn-edit:hover { background: #ff9800; color: white; }
+        .empty-state { text-align: center; padding: 60px 30px; color: #6c757d; }
+        .empty-state-icon { font-size: 4em; margin-bottom: 20px; }
+        .messages { margin-bottom: 20px; }
+        .message { padding: 12px 20px; border-radius: 8px; margin-bottom: 10px; font-weight: 500; }
+        .message.success { background: #e8f5e9; color: #388e3c; border-left: 4px solid #388e3c; }
+        .message.error { background: #ffebee; color: #d32f2f; border-left: 4px solid #d32f2f; }
+        .message.warning { background: #fff3e0; color: #f57c00; border-left: 4px solid #f57c00; }
+        .rank-number { font-weight: bold; color: #adb5bd; font-size: 0.95em; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏢 HR Dashboard</h1>
+        <p>AI Interview Management System{% if hr %} &nbsp;|&nbsp; Welcome, {{ hr.name }}{% endif %}</p>
+    </div>
+
+    <div class="container">
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.total }}</div>
+                <div class="stat-label">Total Interviews</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.completed }}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.in_progress }}</div>
+                <div class="stat-label">In Progress</div>
+            </div>
+        </div>
+
+        <!-- ✅ Renamed to "Create Bulk Interview" — Create New Interview removed -->
+        <div class="actions">
+            <a href="{% url 'bulk_upload_excel' %}" class="btn btn-primary">
+                ➕ Create Bulk Interview
+            </a>
+        </div>
+
+        <div class="interviews-table">
+            <div class="table-header">
+                <h2>All Interviews</h2>
+            </div>
+
+            {% if sessions %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Candidate</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Stage</th>
+                        <th>Score</th>
+                        <th>Violations</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for session in sessions %}
+                    <tr>
+                        <td><span class="rank-number">{{ forloop.counter }}</span></td>
+                        <td><strong>{{ session.candidate_name }}</strong></td>
+                        <td>{{ session.email }}</td>
+                        <td>
+                            <span class="status-badge
+                                {% if session.status == 'CREATED' %}status-created
+                                {% elif session.status == 'IN_PROGRESS' %}status-in-progress
+                                {% elif session.status == 'COMPLETED' %}status-completed
+                                {% elif session.status == 'TERMINATED' %}status-terminated
+                                {% elif session.status == 'CANCELLED' %}status-cancelled
+                                {% endif %}">
+                                {{ session.status }}
+                            </span>
+                        </td>
+                        <td>{{ session.current_stage|title }}</td>
+                        <td>
+                            {% if session.score %}
+                                <span class="score-badge {% if session.score >= 7 %}score-high{% elif session.score >= 5 %}score-medium{% else %}score-low{% endif %}">
+                                    {{ session.score|floatformat:1 }}/10
+                                </span>
+                            {% else %}
+                                <span style="color: #adb5bd;">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span style="color: {% if session.cheating_score > 3 %}#dc3545{% elif session.cheating_score > 0 %}#ffc107{% else %}#28a745{% endif %}">
+                                {{ session.cheating_score }}
+                            </span>
+                        </td>
+                        <td>{{ session.created_at|date:"M d, Y H:i" }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'interview_detail' session.token %}" class="action-btn action-btn-view">View →</a>
+                                <a href="{% url 'edit_interview_score' session.token %}" class="action-btn action-btn-edit">✏️ Edit</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <h3>No interviews yet</h3>
+                <p>Create bulk interviews to get started</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

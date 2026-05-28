@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Completed</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        .icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            font-size: 1.2em;
+            color: #6c757d;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .info-item {
+            margin-bottom: 10px;
+        }
+        
+        .label {
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .value {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">✅</div>
+        <h1>Interview Completed!</h1>
+        <p>Thank you for your time, <strong>{{ session.candidate_name }}</strong>.</p>
+        <p>Your interview has been successfully completed and submitted to our HR team for review.</p>
+        <p>We will contact you via email at <strong>{{ session.email }}</strong> regarding the next steps.</p>
+        
+        <div class="info-box">
+            <div class="info-item">
+                <span class="label">Status:</span>
+                <span class="value">{{ session.status }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Completed At:</span>
+                <span class="value">{{ session.completed_at|date:"F j, Y, g:i a" }}</span>
+            </div>
+            {% if session.score %}
+            <div class="info-item">
+                <span class="label">Your Score:</span>
+                <span class="value">{{ session.score|floatformat:1 }}/10</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <p style="margin-top: 30px; font-size: 1em; color: #6c757d;">
+            You may now close this window.
+        </p>
+    </div>
+</body>
+</html>

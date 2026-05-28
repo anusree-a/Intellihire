@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Company Portal</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',sans-serif; background:#0f172a; color:#fff; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:40px 20px; }
+.container { background:#1e293b; border:1px solid rgba(139,92,246,0.25); border-radius:20px; padding:48px 40px; width:100%; max-width:420px; text-align:center; }
+.icon { font-size:3.2em; margin-bottom:18px; }
+h2 { font-size:1.9em; margin-bottom:6px; }
+h2 span { background:linear-gradient(135deg,#818cf8,#c084fc); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.sub { color:#94a3b8; margin-bottom:30px; line-height:1.5; }
+.btn-group { display:flex; flex-direction:column; gap:16px; }
+.btn { width:100%; padding:14px; border:none; border-radius:12px; font-size:1.05em; font-weight:600; cursor:pointer; transition:all 0.3s; text-decoration:none; display:inline-block; }
+.btn-login { background:linear-gradient(135deg,#4f46e5,#7c3aed); color:#fff; }
+.btn-login:hover { box-shadow:0 6px 24px rgba(99,102,241,0.4); transform:translateY(-2px); }
+.btn-register { background:transparent; border:1px solid rgba(165,180,252,0.3); color:#a5b4fc; }
+.btn-register:hover { background:rgba(99,102,241,0.1); border-color:rgba(165,180,252,0.6); transform:translateY(-2px); }
+.back { display:inline-block; margin-top:22px; color:#64748b; text-decoration:none; font-size:0.9em; }
+.back:hover { color:#a5b4fc; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="icon">🏢</div>
+  <h2>Company <span>Portal</span></h2>
+  <p class="sub">Welcome! Please choose an option below to proceed.</p>
+  <div class="btn-group">
+    <!-- Login for existing companies -->
+    <a href="{% url 'company_login' %}" class="btn btn-login">Login</a>
+    <!-- Sign up / Register for new companies -->
+    <a href="{% url 'subscription_page' %}" class="btn btn-register">Sign In / Register</a>
+  </div>
+  <a href="{% url 'home' %}" class="back">← Back to Home</a>
+</div>
+</body>
+</html>

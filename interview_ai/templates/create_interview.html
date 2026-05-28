@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Interview - HR Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        
+        .info-box strong {
+            color: #1976d2;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        label .required {
+            color: #dc3545;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .feature-list {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .feature-list h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .feature-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            color: #6c757d;
+        }
+        
+        .feature-list li:before {
+            content: "✅ ";
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>📝 Create New Interview</h1>
+        <p class="subtitle">Enter candidate details to generate a personalized interview link</p>
+        
+        <div class="info-box">
+            <strong>ℹ️ New Process:</strong> Candidates will upload their own resume when they open the interview link. This ensures you always get their latest information!
+        </div>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="candidate_name">
+                    Candidate Name <span class="required">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    id="candidate_name" 
+                    name="candidate_name" 
+                    placeholder="e.g., John Smith"
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="email">
+                    Email Address <span class="required">*</span>
+                </label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="e.g., john.smith@email.com"
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">
+                    Phone Number (Optional)
+                </label>
+                <input 
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    placeholder="e.g., +1 234 567 8900"
+                >
+            </div>
+            
+            <div class="feature-list">
+                <h3>🤖 What happens next:</h3>
+                <ul>
+                    <li>Unique interview link will be generated</li>
+                    <li>Email invitation sent to candidate automatically</li>
+                    <li>Candidate uploads their resume before interview</li>
+                    <li>AI analyzes resume and personalizes questions</li>
+                    <li>Interview conducted with adaptive AI agent</li>
+                    <li>You receive detailed evaluation report</li>
+                </ul>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                ✨ Create Interview & Send Invitation
+            </button>
+        </form>
+        
+        <a href="{% url 'hr_dashboard' %}" class="back-link">← Back to Dashboard</a>
+    </div>
+</body>
+</html>

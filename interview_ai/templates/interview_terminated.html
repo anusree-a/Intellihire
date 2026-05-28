@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Terminated</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        .icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #e74c3c;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            font-size: 1.2em;
+            color: #6c757d;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .warning-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">⛔</div>
+        <h1>Interview Terminated</h1>
+        <p>We're sorry, <strong>{{ session.candidate_name }}</strong>, but your interview has been terminated.</p>
+        <p>This occurred due to multiple policy violations detected during the interview process.</p>
+        
+        <div class="warning-box">
+            <div class="warning-title">⚠️ Violations Detected: {{ session.cheating_score }}</div>
+            <p>Common violations include:</p>
+            <ul>
+                <li>Switching tabs or windows during the interview</li>
+                <li>Turning off camera or microphone</li>
+                <li>Attempting to copy or paste content</li>
+                <li>Leaving the interview window</li>
+            </ul>
+        </div>
+        
+        <p style="margin-top: 30px; font-size: 1em; color: #6c757d;">
+            If you believe this was an error, please contact our HR team at <strong>{{ session.email }}</strong>.
+        </p>
+    </div>
+</body>
+</html>

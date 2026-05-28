@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Company Details</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',sans-serif; background:#0f172a; color:#fff; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:40px 20px; }
+.container { background:#1e293b; border:1px solid rgba(99,102,241,0.25); border-radius:20px; padding:44px 40px; width:100%; max-width:560px; }
+.step-bar { display:flex; justify-content:center; gap:8px; margin-bottom:32px; }
+.step { width:60px; height:4px; border-radius:4px; background:#334155; }
+.step.active { background:linear-gradient(90deg,#818cf8,#c084fc); }
+h2 { font-size:1.8em; margin-bottom:6px; }
+h2 span { background:linear-gradient(135deg,#818cf8,#c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.plan-badge { display:inline-block; background:rgba(99,102,241,0.15); color:#a5b4fc; padding:5px 14px; border-radius:20px; font-size:0.85em; margin-bottom:24px; }
+.form-row { display:flex; gap:16px; }
+.form-row .fg { flex:1; }
+.fg { margin-bottom:18px; }
+.fg label { display:block; color:#94a3b8; font-size:0.9em; margin-bottom:6px; }
+.fg input, .fg select {
+    width:100%; padding:12px 16px; border-radius:10px; border:1px solid #334155;
+    background:#0f172a; color:#fff; font-size:1em; outline:none; transition:border 0.2s;
+}
+.fg input:focus, .fg select:focus { border-color:#818cf8; }
+.fg select option { background:#1e293b; }
+.btn-next {
+    width:100%; padding:14px; margin-top:10px; border:none; border-radius:12px;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed); color:#fff; font-size:1.05em;
+    font-weight:600; cursor:pointer; transition:all 0.3s;
+}
+.btn-next:hover { box-shadow:0 6px 24px rgba(99,102,241,0.4); transform:translateY(-2px); }
+.back { display:inline-block; color:#64748b; text-decoration:none; font-size:0.9em; margin-top:14px; }
+.back:hover { color:#a5b4fc; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="step-bar"><div class="step active"></div><div class="step active"></div><div class="step"></div></div>
+  <h2>Company <span>Details</span></h2>
+  <div class="plan-badge">Plan: {{ plan.name|title }} — ${{ plan.price }}/mo</div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="fg"><label>Company Name *</label><input type="text" name="company_name" required></div>
+      <div class="fg"><label>Company Email *</label><input type="email" name="company_email" required></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Phone</label><input type="tel" name="company_phone"></div>
+      <div class="fg"><label>Website</label><input type="url" name="company_website" placeholder="https://..."></div>
+    </div>
+    <div class="fg"><label>Address</label><input type="text" name="company_address"></div>
+    <div class="form-row">
+      <div class="fg">
+        <label>Industry</label>
+        <select name="company_industry">
+          <option value="">Select industry</option>
+          <option>Technology</option><option>Finance</option><option>Healthcare</option>
+          <option>Education</option><option>E-Commerce</option><option>Manufacturing</option><option>Other</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Company Size</label>
+        <select name="company_size">
+          <option value="">Select size</option>
+          <option>1-10</option><option>11-50</option><option>51-200</option><option>201-500</option><option>500+</option>
+        </select>
+      </div>
+    </div>
+    <hr style="border-color:#334155; margin:24px 0;">
+    <p style="color:#94a3b8; font-size:0.92em; margin-bottom:16px;">Admin credentials (you'll use these to manage the company)</p>
+    <div class="form-row">
+      <div class="fg"><label>Admin Name *</label><input type="text" name="admin_name" required></div>
+    </div>
+    <div class="fg"><label>Admin Password *</label><input type="password" name="admin_password" required minlength="6"></div>
+
+    <button type="submit" class="btn-next">Continue to Payment →</button>
+  </form>
+  <a href="{% url 'subscription_page' %}" class="back">← Back to Plans</a>
+</div>
+</body>
+</html>

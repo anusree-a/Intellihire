@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Report - {{ session.candidate_name }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 { font-size: 2em; margin-bottom: 5px; }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        
+        .section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .info-label {
+            font-size: 0.85em;
+            color: #6c757d;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #212529;
+        }
+        
+        .score-display {
+            font-size: 3em;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .question-item {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .question-header {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .answer {
+            margin: 10px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            color: #388e3c;
+        }
+        
+        .vague-indicator {
+            background: #fff3cd;
+            color: #856404;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        
+        .cheating-event {
+            padding: 15px;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .evaluation-report {
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .cancel-section {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .cancel-section h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        
+        .cancel-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+        
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+        
+        .status-cancelled {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        .modal h3 {
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 Interview Report</h1>
+        <p>Detailed analysis for {{ session.candidate_name }}</p>
+    </div>
+    
+    <div class="container">
+        <!-- Candidate Info -->
+        <div class="section">
+            <h2>👤 Candidate Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Name</div>
+                    <div class="info-value">{{ session.candidate_name }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Email</div>
+                    <div class="info-value">{{ session.email }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Status</div>
+                    <div class="info-value">
+                        <span class="status-badge status-{{ session.status|lower }}">
+                            {{ session.status }}
+                        </span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Stage</div>
+                    <div class="info-value">{{ session.current_stage|title }}</div>
+                </div>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Link Accessed</div>
+                    <div class="info-value">{{ session.link_access_count }} time(s)</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">First Access</div>
+                    <div class="info-value">
+                        {% if session.first_access_at %}
+                            {{ session.first_access_at|date:"M d, Y H:i" }}
+                        {% else %}
+                            Never
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scores -->
+        <div class="section">
+            <h2>⭐ Performance Scores</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Overall Score</div>
+                    <div class="score-display" style="color: {% if session.score >= 7 %}#28a745{% elif session.score >= 5 %}#ffc107{% else %}#dc3545{% endif %}">
+                        {% if session.score %}{{ session.score|floatformat:1 }}/10{% else %}N/A{% endif %}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Technical Score</div>
+                    <div class="score-display" style="font-size: 2em; color: #667eea;">
+                        {% if session.technical_score %}{{ session.technical_score|floatformat:1 }}/10{% else %}N/A{% endif %}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Communication Score</div>
+                    <div class="score-display" style="font-size: 2em; color: #764ba2;">
+                        {% if session.communication_score %}{{ session.communication_score|floatformat:1 }}/10{% else %}N/A{% endif %}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Violations</div>
+                    <div class="score-display" style="font-size: 2em; color: {% if session.cheating_score > 3 %}#dc3545{% elif session.cheating_score > 0 %}#ffc107{% else %}#28a745{% endif %}">
+                        {{ session.cheating_score }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Evaluation Report -->
+        {% if session.evaluation_report %}
+        <div class="section">
+            <h2>📝 AI Evaluation Report</h2>
+            <div class="evaluation-report">{{ session.evaluation_report }}</div>
+        </div>
+        {% endif %}
+        
+        <!-- Questions & Answers -->
+        <div class="section">
+            <h2>💬 Interview Questions & Answers</h2>
+            {% if questions %}
+                {% for q in questions %}
+                <div class="question-item">
+                    <div class="question-header">
+                        Q{{ forloop.counter }}: {{ q.question_text }}
+                        {% if q.was_vague %}
+                            <span class="vague-indicator">⚠️ Vague Answer</span>
+                        {% endif %}
+                    </div>
+                    <div style="font-size: 0.85em; color: #6c757d; margin-bottom: 10px;">
+                        Category: <strong>{{ q.category }}</strong> | 
+                        Asked at: {{ q.asked_at|date:"H:i" }}
+                        {% if q.follow_up_count > 0 %}
+                        | Follow-ups: {{ q.follow_up_count }}
+                        {% endif %}
+                    </div>
+                    <div class="answer">
+                        <strong>Answer:</strong> {{ q.answer_text|default:"No answer provided" }}
+                    </div>
+                    {% if q.feedback %}
+                    <div class="feedback">
+                        <strong>Score: {{ q.score|floatformat:1 }}/10</strong><br>
+                        Feedback: {{ q.feedback }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: #6c757d; text-align: center; padding: 20px;">No questions recorded</p>
+            {% endif %}
+        </div>
+        
+        <!-- Anti-Cheating Events -->
+        <div class="section">
+            <h2>🔒 Anti-Cheating Events</h2>
+            {% if cheating_events %}
+                {% for event in cheating_events %}
+                <div class="cheating-event">
+                    <strong>{{ event.event_type }}</strong> - {{ event.timestamp|date:"M d, H:i:s" }}
+                    {% if event.metadata %}
+                    <div style="font-size: 0.9em; margin-top: 5px;">{{ event.metadata }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: #28a745; text-align: center; padding: 20px;">✅ No violations detected</p>
+            {% endif %}
+        </div>
+
+        <!-- Interview Recording -->
+        {% if session.video_recording %}
+        <div class="section">
+            <h2>🎥 Interview Recording</h2>
+            <video width="420" height="260" controls>
+                <source src="{{ session.video_recording.url }}" type="video/webm">
+                Your browser does not support video.
+            </video>
+        </div>
+        {% endif %}
+        
+        <!-- Actions -->
+        <div class="section">
+            <a href="{% url 'hr_dashboard' %}" class="btn btn-primary">← Back to Dashboard</a>
+            <a href="#" onclick="window.print()" class="btn btn-secondary">🖨️ Print Report</a>
+            
+            {% if session.status not in 'COMPLETED,TERMINATED,CANCELLED' %}
+                <button onclick="showCancelModal()" class="btn btn-danger">🚫 Cancel Interview</button>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Cancel Modal -->
+    <div id="cancelModal" class="modal">
+        <div class="modal-content">
+            <h3>⚠️ Cancel Interview</h3>
+            <p>Are you sure you want to cancel this interview for <strong>{{ session.candidate_name }}</strong>?</p>
+            
+            <form method="POST" action="{% url 'cancel_interview' session.token %}">
+                {% csrf_token %}
+                <label for="reason">Reason for cancellation:</label>
+                <textarea id="reason" name="reason" rows="3" placeholder="e.g., Position filled, candidate withdrew, etc."></textarea>
+                
+                <button type="submit" class="btn btn-danger">Yes, Cancel Interview</button>
+                <button type="button" onclick="hideCancelModal()" class="btn btn-secondary">No, Keep It</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function showCancelModal() {
+            document.getElementById('cancelModal').style.display = 'block';
+        }
+        
+        function hideCancelModal() {
+            document.getElementById('cancelModal').style.display = 'none';
+        }
+        
+        // Close modal if clicked outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('cancelModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

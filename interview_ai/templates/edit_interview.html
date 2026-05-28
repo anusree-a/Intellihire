@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Candidate Score</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 650px;
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .card-header .icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .card-header h1 {
+            font-size: 1.8em;
+            color: #212529;
+            margin-bottom: 6px;
+        }
+
+        .card-header p {
+            color: #6c757d;
+            font-size: 1em;
+        }
+
+        .candidate-info {
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            border: 1px solid #667eea30;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .candidate-info .avatar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .candidate-info .info h3 {
+            color: #212529;
+            font-size: 1.05em;
+        }
+
+        .candidate-info .info p {
+            color: #6c757d;
+            font-size: 0.88em;
+            margin-top: 2px;
+        }
+
+        /* Overall score display */
+        .overall-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .overall-display .label {
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.85;
+            margin-bottom: 8px;
+        }
+
+        .overall-display .score-value {
+            font-size: 3.5em;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .overall-display .score-value span {
+            font-size: 0.45em;
+            opacity: 0.75;
+            font-weight: 400;
+        }
+
+        .overall-display .score-label {
+            margin-top: 8px;
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        /* Score inputs side by side */
+        .scores-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1em;
+        }
+
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 14px 14px 14px 42px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #212529;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .form-group input[type="number"]:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+        }
+
+        /* Score bar under each input */
+        .score-bar {
+            height: 5px;
+            background: #e9ecef;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.4s ease, background 0.4s ease;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 0.95em;
+            color: #212529;
+            resize: vertical;
+            min-height: 140px;
+            font-family: inherit;
+            transition: all 0.2s;
+            outline: none;
+            line-height: 1.6;
+        }
+
+        .form-group textarea:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-cancel {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-cancel:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        /* Hidden overall score input */
+        #overall-hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+    <div class="card-header">
+        <div class="icon">✏️</div>
+        <h1>Edit Candidate Score</h1>
+        <p>Manually override AI-generated scores</p>
+    </div>
+
+    <!-- Candidate Info -->
+    <div class="candidate-info">
+        <div class="avatar">{{ session.candidate_name|first|upper }}</div>
+        <div class="info">
+            <h3>{{ session.candidate_name }}</h3>
+            <p>{{ session.email }} &nbsp;|&nbsp; Status: {{ session.status }}</p>
+        </div>
+    </div>
+
+    <!-- Live Overall Score Display -->
+    <div class="overall-display">
+        <div class="label">Overall Score (Auto Calculated)</div>
+        <div class="score-value" id="live-overall">
+            {{ session.score|floatformat:1 }}<span>/10</span>
+        </div>
+        <div class="score-label" id="live-label">–</div>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Technical + Communication side by side -->
+        <div class="scores-row">
+
+            <div class="form-group">
+                <label>🔧 Technical Score</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔧</span>
+                    <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="10"
+                        name="technical_score"
+                        id="technical_score"
+                        value="{{ session.technical_score }}"
+                        oninput="recalculate()"
+                    >
+                </div>
+                <div class="score-bar">
+                    <div class="score-bar-fill" id="tech-bar"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>💬 Communication Score</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">💬</span>
+                    <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="10"
+                        name="communication_score"
+                        id="communication_score"
+                        value="{{ session.communication_score }}"
+                        oninput="recalculate()"
+                    >
+                </div>
+                <div class="score-bar">
+                    <div class="score-bar-fill" id="comm-bar"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Hidden overall score that gets auto-filled -->
+        <input type="hidden" name="score" id="score-hidden">
+
+        <!-- Evaluation Report -->
+        <div class="form-group">
+            <label>📋 Evaluation Report</label>
+            <textarea name="evaluation_report">{{ session.evaluation_report }}</textarea>
+        </div>
+
+        <div class="btn-row">
+            <a href="{% url 'hr_dashboard' %}" class="btn btn-cancel">← Cancel</a>
+            <button type="submit" class="btn btn-save">💾 Save Changes</button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    function getScoreColor(score) {
+        if (score >= 7) return '#28a745';
+        if (score >= 5) return '#ffc107';
+        return '#dc3545';
+    }
+
+    function getScoreLabel(score) {
+        if (score >= 8.5) return '🌟 Excellent Candidate';
+        if (score >= 7)   return '✅ Good Candidate';
+        if (score >= 5)   return '⚠️ Average Candidate';
+        if (score >= 3)   return '❌ Below Average';
+        return '🚫 Poor Performance';
+    }
+
+    function recalculate() {
+        const tech = parseFloat(document.getElementById('technical_score').value) || 0;
+        const comm = parseFloat(document.getElementById('communication_score').value) || 0;
+
+        // Overall = average of technical and communication
+        const overall = ((tech + comm) / 2).toFixed(1);
+
+        // Update live display
+        document.getElementById('live-overall').innerHTML =
+            overall + '<span>/10</span>';
+        document.getElementById('live-overall').style.color = 'white';
+        document.getElementById('live-label').textContent = getScoreLabel(parseFloat(overall));
+
+        // Update hidden input
+        document.getElementById('score-hidden').value = overall;
+
+        // Update score bars
+        const techBar = document.getElementById('tech-bar');
+        techBar.style.width = (tech / 10 * 100) + '%';
+        techBar.style.background = getScoreColor(tech);
+
+        const commBar = document.getElementById('comm-bar');
+        commBar.style.width = (comm / 10 * 100) + '%';
+        commBar.style.background = getScoreColor(comm);
+    }
+
+    // Run on page load to populate bars from existing values
+    window.onload = recalculate;
+</script>
+
+</body>
+</html>

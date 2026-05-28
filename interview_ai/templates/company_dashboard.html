@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ company.name }} — Dashboard</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',sans-serif; background:#0f172a; color:#fff; min-height:100vh; }
+/* Nav */
+nav { display:flex; align-items:center; justify-content:space-between; padding:18px 36px; background:#1e293b; border-bottom:1px solid #334155; }
+nav .logo { font-weight:700; font-size:1.2em; }
+nav .logo span { background:linear-gradient(135deg,#818cf8,#c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+nav a { color:#94a3b8; text-decoration:none; font-size:0.92em; margin-left:20px; }
+nav a:hover { color:#fff; }
+nav a.logout { color:#f87171; }
+/* Layout */
+.page { max-width:1100px; margin:0 auto; padding:36px 24px; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:36px; }
+.stat-card { background:#1e293b; border:1px solid #334155; border-radius:14px; padding:22px; }
+.stat-card .label { color:#64748b; font-size:0.85em; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+.stat-card .value { font-size:2em; font-weight:700; }
+/* Section */
+.section { background:#1e293b; border:1px solid #334155; border-radius:16px; padding:28px; margin-bottom:28px; }
+.section-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.section-head h3 { font-size:1.15em; }
+.btn-sm {
+    padding:10px 20px; border:none; border-radius:8px; background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:#fff; font-size:0.88em; font-weight:600; cursor:pointer; transition:all 0.25s;
+}
+.btn-sm:hover { box-shadow:0 4px 16px rgba(99,102,241,0.4); }
+/* Add HR form */
+.add-hr-form { display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:12px; align-items:end; }
+.add-hr-form .fg { margin:0; }
+.add-hr-form label { display:block; color:#64748b; font-size:0.82em; margin-bottom:5px; }
+.add-hr-form input { width:100%; padding:10px 14px; border-radius:8px; border:1px solid #334155; background:#0f172a; color:#fff; font-size:0.92em; outline:none; }
+.add-hr-form input:focus { border-color:#818cf8; }
+/* Table */
+table { width:100%; border-collapse:collapse; }
+th { text-align:left; color:#64748b; font-size:0.82em; text-transform:uppercase; letter-spacing:1px; padding:10px 0; border-bottom:1px solid #334155; }
+td { padding:14px 0; border-bottom:1px solid rgba(51,65,85,0.5); color:#cbd5e1; font-size:0.93em; }
+.badge { display:inline-block; padding:4px 12px; border-radius:20px; font-size:0.82em; font-weight:600; }
+.badge.active { background:rgba(34,197,94,0.15); color:#4ade80; }
+.badge.paid { background:rgba(99,102,241,0.15); color:#a5b4fc; }
+/* Messages */
+.messages { padding:0 24px; }
+.msg { padding:12px 18px; border-radius:8px; margin-bottom:10px; font-size:0.92em; }
+.msg.success { background:#166534; border-left:4px solid #22c55e; }
+.msg.error   { background:#991b1b; border-left:4px solid #ef4444; }
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">🏢 {{ company.name }} — <span>IntelliHire</span></div>
+  <div>
+    <a href="{% url 'company_login' %}">Company Login</a>
+    <a href="{% url 'company_logout' %}" class="logout">Logout</a>
+  </div>
+</nav>
+
+{% if messages %}<div class="messages">{% for m in messages %}<div class="msg {{ m.tags }}">{{ m }}</div>{% endfor %}</div>{% endif %}
+
+<div class="page">
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card"><div class="label">Plan</div><div class="value" style="font-size:1.3em;text-transform:capitalize;">{{ company.plan.name }}</div></div>
+    <div class="stat-card"><div class="label">Payment</div><div class="value"><span class="badge paid">Paid</span></div></div>
+    <div class="stat-card"><div class="label">HR Members</div><div class="value">{{ hr_users|length }}</div></div>
+    <div class="stat-card"><div class="label">Interviews</div><div class="value">{{ total_interviews }}</div></div>
+  </div>
+
+  <!-- Add HR -->
+  <div class="section">
+    <div class="section-head"><h3>👥 HR Members</h3></div>
+
+    <form method="POST" action="{% url 'add_hr_user' %}" class="add-hr-form" style="margin-bottom:24px;">
+      {% csrf_token %}
+      <div class="fg"><label>Name</label><input type="text" name="hr_name" placeholder="John Doe" required></div>
+      <div class="fg"><label>Email</label><input type="email" name="hr_email" placeholder="hr@company.com" required></div>
+      <div class="fg"><label>Password</label><input type="password" name="hr_password" placeholder="Min 6 chars" required minlength="6"></div>
+      <button type="submit" class="btn-sm">+ Add HR</button>
+    </form>
+
+    <table>
+      <thead><tr><th>Name</th><th>Email</th><th>Last Login</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for hr in hr_users %}
+        <tr>
+          <td>{{ hr.name }}</td>
+          <td>{{ hr.email }}</td>
+          <td>{% if hr.last_login %}{{ hr.last_login|date:"M d, Y H:i" }}{% else %}Never{% endif %}</td>
+          <td><span class="badge active">{% if hr.is_active %}Active{% else %}Inactive{% endif %}</span></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" style="text-align:center;color:#64748b;padding:24px;">No HR members yet. Add one above!</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Recent Interviews -->
+  <div class="section">
+    <div class="section-head"><h3>📊 Recent Interviews</h3></div>
+    <table>
+      <thead><tr><th>Candidate</th><th>Email</th><th>Status</th><th>Score</th><th>Created</th></tr></thead>
+      <tbody>
+        {% for iv in interviews|slice:":10" %}
+        <tr>
+          <td>{{ iv.candidate_name }}</td>
+          <td>{{ iv.email }}</td>
+          <td><span class="badge">{{ iv.status }}</span></td>
+          <td>{% if iv.score %}{{ iv.score|floatformat:1 }}/10{% else %}-{% endif %}</td>
+          <td>{{ iv.created_at|date:"M d, Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" style="text-align:center;color:#64748b;padding:24px;">No interviews yet. HR members can create them!</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+setTimeout(() => document.querySelectorAll('.msg').forEach(m => m.remove()), 3000);
+</script>
+</body>
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Resume - AI Interview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+        
+        .welcome-text {
+            font-size: 1.2em;
+            color: #6c757d;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .info-box h3 {
+            color: #495057;
+            margin-bottom: 15px;
+        }
+        
+        .info-box ul {
+            list-style-position: inside;
+            color: #6c757d;
+            line-height: 1.8;
+        }
+        
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 30px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        
+        .upload-area:hover {
+            background: #e9ecef;
+            border-color: #764ba2;
+        }
+        
+        .upload-area.dragover {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+        
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            font-size: 1.2em;
+            color: #495057;
+            margin-bottom: 10px;
+        }
+        
+        .upload-subtext {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .file-info {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .file-info.show {
+            display: block;
+        }
+        
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            margin: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📄</div>
+        <h1>Welcome, {{ session.candidate_name }}!</h1>
+        <p class="welcome-text">Before we begin your interview, please upload your resume.</p>
+        
+        <div class="info-box">
+            <h3>📋 Resume Requirements:</h3>
+            <ul>
+                <li>Format: PDF or DOCX only</li>
+                <li>Maximum size: 5MB</li>
+                <li>Include your contact information</li>
+                <li>List your skills and experience</li>
+                <li>Mention relevant projects</li>
+            </ul>
+        </div>
+        
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">☁️</div>
+            <div class="upload-text">Click to upload or drag & drop</div>
+            <div class="upload-subtext">PDF or DOCX (max 5MB)</div>
+        </div>
+        
+        <input type="file" id="fileInput" accept=".pdf,.docx" />
+        
+        <div class="file-info" id="fileInfo">
+            <strong>Selected file:</strong> <span id="fileName"></span><br>
+            <strong>Size:</strong> <span id="fileSize"></span>
+        </div>
+        
+        <div class="error-message" id="errorMessage"></div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px; color: #6c757d;">Uploading and analyzing your resume...</p>
+        </div>
+        
+        <button class="btn btn-primary" id="uploadBtn" disabled>
+            📤 Upload & Continue to Interview
+        </button>
+        
+        <p style="margin-top: 20px; color: #6c757d; font-size: 0.9em;">
+            Your resume will be used to personalize your interview questions.
+        </p>
+    </div>
+
+    <script>
+        const SESSION_TOKEN = '{{ session.token }}';
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const loading = document.getElementById('loading');
+        
+        let selectedFile = null;
+        
+        // Click to upload
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // File selected
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+        
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+        
+        function handleFile(file) {
+            // Validate file type
+            const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            if (!validTypes.includes(file.type) && !file.name.toLowerCase().endsWith('.pdf') && !file.name.toLowerCase().endsWith('.docx')) {
+                showError('Please upload a PDF or DOCX file only.');
+                return;
+            }
+            
+            // Validate file size (5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showError('File size must be less than 5MB.');
+                return;
+            }
+            
+            // File is valid
+            selectedFile = file;
+            hideError();
+            
+            // Show file info
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.classList.add('show');
+            
+            // Enable upload button
+            uploadBtn.disabled = false;
+        }
+        
+        // Upload button click
+        uploadBtn.addEventListener('click', async () => {
+            if (!selectedFile) {
+                showError('Please select a file first.');
+                return;
+            }
+            
+            uploadBtn.disabled = true;
+            loading.classList.add('show');
+            hideError();
+            
+            const formData = new FormData();
+            formData.append('resume', selectedFile);
+            
+            try {
+                const response = await fetch(`/api/interview/${SESSION_TOKEN}/upload-resume/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Redirect to interview page
+                    window.location.href = `/interview/${SESSION_TOKEN}/`;
+                } else {
+                    showError(data.error || 'Upload failed. Please try again.');
+                    uploadBtn.disabled = false;
+                    loading.classList.remove('show');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                showError('Upload failed. Please check your connection and try again.');
+                uploadBtn.disabled = false;
+                loading.classList.remove('show');
+            }
+        });
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+        }
+        
+        function hideError() {
+            errorMessage.classList.remove('show');
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' bytes';
+            else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            else return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

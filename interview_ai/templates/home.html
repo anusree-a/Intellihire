@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InterviewAI - Smart Recruitment Platform</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',sans-serif; min-height:100vh; background:#0f172a; color:#fff; }
+
+/* Hero */
+.hero {
+    min-height:100vh;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    position:relative; overflow:hidden; text-align:center; padding:40px 20px;
+}
+.hero::before {
+    content:'';position:absolute;top:-50%;left:-50%;
+    width:200%;height:200%;
+    background:radial-gradient(circle at 30% 50%, rgba(99,102,241,0.15) 0%, transparent 50%),
+               radial-gradient(circle at 70% 50%, rgba(139,92,246,0.1) 0%, transparent 50%);
+    animation: drift 20s ease-in-out infinite alternate;
+}
+@keyframes drift { to { transform:translate(3%,2%) rotate(2deg); } }
+
+.hero-content { position:relative; z-index:2; max-width:800px; }
+.badge {
+    display:inline-block; padding:8px 20px; border-radius:50px;
+    background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.3);
+    color:#a5b4fc; font-size:0.9em; margin-bottom:28px; letter-spacing:1px;
+}
+.hero h1 { font-size:3.2em; font-weight:700; line-height:1.15; margin-bottom:20px; }
+.hero h1 span { background:linear-gradient(135deg,#818cf8,#c084fc); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero p { font-size:1.2em; color:#94a3b8; max-width:580px; margin:0 auto 48px; line-height:1.7; }
+
+/* Cards */
+.cards { display:flex; gap:24px; justify-content:center; flex-wrap:wrap; }
+.card {
+    width:280px; background:rgba(30,41,59,0.8); border:1px solid rgba(99,102,241,0.2);
+    border-radius:20px; padding:40px 30px; text-align:center;
+    transition:all 0.35s; cursor:pointer; text-decoration:none; color:#fff;
+    backdrop-filter:blur(6px); position:relative; overflow:hidden;
+}
+.card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg,#818cf8,#c084fc); opacity:0; transition:opacity 0.3s;
+}
+.card:hover { transform:translateY(-6px); border-color:rgba(99,102,241,0.5); box-shadow:0 20px 60px rgba(99,102,241,0.15); }
+.card:hover::before { opacity:1; }
+.card-icon { font-size:2.8em; margin-bottom:18px; }
+.card h3 { font-size:1.3em; margin-bottom:10px; }
+.card p { color:#94a3b8; font-size:0.95em; line-height:1.6; }
+.card .tag {
+    display:inline-block; margin-top:18px; padding:6px 16px;
+    border-radius:20px; font-size:0.82em; font-weight:600;
+}
+.card.hr-card .tag { background:rgba(99,102,241,0.2); color:#a5b4fc; }
+.card.company-card .tag { background:rgba(139,92,246,0.2); color:#c084fc; }
+
+/* Features strip */
+.features {
+    display:flex; justify-content:center; gap:40px; flex-wrap:wrap;
+    padding:60px 20px; background:rgba(15,23,42,0.6); border-top:1px solid rgba(99,102,241,0.1);
+}
+.feature { text-align:center; max-width:180px; }
+.feature-icon { font-size:2em; margin-bottom:10px; }
+.feature span { color:#94a3b8; font-size:0.9em; }
+
+/* Messages */
+.messages { position:fixed; top:20px; right:20px; z-index:999; }
+.msg {
+    padding:14px 22px; border-radius:10px; margin-bottom:10px;
+    font-size:0.95em; animation:slideIn 0.3s ease;
+    box-shadow:0 4px 20px rgba(0,0,0,0.3);
+}
+.msg.success { background:#166534; border-left:4px solid #22c55e; }
+.msg.error   { background:#991b1b; border-left:4px solid #ef4444; }
+@keyframes slideIn { from { transform:translateX(120%); opacity:0; } to { transform:translateX(0); opacity:1; } }
+</style>
+</head>
+<body>
+
+{% if messages %}
+<div class="messages">
+  {% for msg in messages %}
+  <div class="msg {{ msg.tags }}">{{ msg }}</div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="badge">✦ AI-Powered Recruitment</div>
+    <h1>Hire Smarter with <span>IntelliHire</span></h1>
+    <p>Automate your entire interview process with an adaptive voice-based AI agent that interviews candidates, evaluates answers, and delivers detailed reports instantly.</p>
+
+    <div class="cards">
+      <a href="{% url 'hr_login' %}" class="card hr-card">
+        <div class="card-icon">👔</div>
+        <h3>HR Portal</h3>
+        <p>Sign in to manage interviews, view reports and track candidates.</p>
+        <span class="tag">Sign In →</span>
+      </a>
+
+      <a href="{% url 'company_portal' %}" class="card company-card">
+        <div class="card-icon">🏢</div>
+        <h3>Company Login</h3>
+        <p>Login to your company dashboard or register a new company.</p>
+        <span class="tag">Get Started →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="features">
+  <div class="feature"><div class="feature-icon">🤖</div><span>AI Voice Agent</span></div>
+  <div class="feature"><div class="feature-icon">📄</div><span>Resume Parsing</span></div>
+  <div class="feature"><div class="feature-icon">🔒</div><span>Anti-Cheating</span></div>
+  <div class="feature"><div class="feature-icon">📊</div><span>Smart Reports</span></div>
+  <div class="feature"><div class="feature-icon">⚡</div><span>Adaptive Questions</span></div>
+  <div class="feature"><div class="feature-icon">📧</div><span>Auto Notifications</span></div>
+</section>
+
+<script>
+// Auto-dismiss messages after 4s
+document.querySelectorAll('.msg').forEach(m => setTimeout(() => m.remove(), 4000));
+</script>
+</body>
+</html>

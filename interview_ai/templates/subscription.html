@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose a Plan</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',sans-serif; background:#0f172a; color:#fff; min-height:100vh; padding:60px 20px; }
+.back { display:inline-block; color:#a5b4fc; text-decoration:none; margin-bottom:30px; font-size:0.95em; }
+.back:hover { color:#fff; }
+h1 { text-align:center; font-size:2.4em; margin-bottom:10px; }
+h1 span { background:linear-gradient(135deg,#818cf8,#c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.sub { text-align:center; color:#94a3b8; margin-bottom:50px; font-size:1.05em; }
+.plans { display:flex; gap:24px; justify-content:center; flex-wrap:wrap; max-width:1100px; margin:0 auto; }
+.plan {
+    background:#1e293b; border:1px solid rgba(99,102,241,0.25); border-radius:20px;
+    padding:40px 28px; width:300px; position:relative; transition:all 0.3s; text-align:center;
+}
+.plan:hover { border-color:#818cf8; transform:translateY(-4px); box-shadow:0 16px 50px rgba(99,102,241,0.15); }
+.plan.popular { border-color:#818cf8; }
+.plan.popular::before { content:'⭐ Most Popular'; position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#818cf8,#c084fc); padding:5px 18px; border-radius:30px; font-size:0.8em; font-weight:600; white-space:nowrap; }
+.plan h3 { font-size:1.4em; margin-bottom:8px; text-transform:uppercase; letter-spacing:2px; }
+.price { font-size:2.8em; font-weight:700; margin:16px 0 4px; }
+.price span { font-size:0.35em; color:#94a3b8; font-weight:400; }
+.plan-desc { color:#94a3b8; font-size:0.92em; margin-bottom:24px; min-height:40px; }
+.features-list { list-style:none; text-align:left; margin-bottom:28px; }
+.features-list li { padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.06); color:#cbd5e1; font-size:0.93em; }
+.features-list li::before { content:'✓ '; color:#818cf8; font-weight:700; }
+.features-list li.no { color:#64748b; }
+.features-list li.no::before { content:'✗ '; color:#64748b; }
+.btn-plan {
+    display:block; width:100%; padding:14px; border:none; border-radius:12px;
+    font-size:1em; font-weight:600; cursor:pointer; transition:all 0.3s; text-decoration:none; color:#fff;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+}
+.btn-plan:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(99,102,241,0.4); }
+</style>
+</head>
+<body>
+<a href="{% url 'home' %}" class="back">← Back</a>
+<h1>Choose Your <span>Plan</span></h1>
+<p class="sub">Start your AI-powered recruitment journey today</p>
+<div class="plans">
+  {% for plan in plans %}
+  <div class="plan {% if plan.name == 'professional' %}popular{% endif %}">
+    <h3>{{ plan.name }}</h3>
+    <div class="price">${{ plan.price }}<span>/month</span></div>
+    <p class="plan-desc">{{ plan.description }}</p>
+    <ul class="features-list">
+      <li>{{ plan.interviews_per_month }} interviews / month</li>
+      {% if plan.ai_features %}<li>AI Adaptive Questioning</li>{% else %}<li class="no">AI Adaptive Questioning</li>{% endif %}
+      {% if plan.analytics %}<li>Advanced Analytics</li>{% else %}<li class="no">Advanced Analytics</li>{% endif %}
+      {% if plan.priority_support %}<li>Priority Support</li>{% else %}<li class="no">Priority Support</li>{% endif %}
+      <li>Voice Interview Agent</li>
+      <li>Anti-Cheating Monitor</li>
+    </ul>
+    <a href="{% url 'company_details' plan.name %}" class="btn-plan">Get Started</a>
+  </div>
+  {% endfor %}
+</div>
+</body>
+</html>

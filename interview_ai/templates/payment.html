@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',sans-serif; background:#0f172a; color:#fff; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:40px 20px; }
+.container { background:#1e293b; border:1px solid rgba(99,102,241,0.25); border-radius:20px; padding:44px 40px; width:100%; max-width:520px; }
+.step-bar { display:flex; justify-content:center; gap:8px; margin-bottom:32px; }
+.step { width:60px; height:4px; border-radius:4px; background:#334155; }
+.step.active { background:linear-gradient(90deg,#818cf8,#c084fc); }
+h2 { font-size:1.8em; margin-bottom:6px; }
+h2 span { background:linear-gradient(135deg,#818cf8,#c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.order-summary { background:#0f172a; border-radius:14px; padding:20px; margin:20px 0 28px; }
+.order-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #1e293b; color:#cbd5e1; font-size:0.95em; }
+.order-row:last-child { border:none; font-weight:700; color:#fff; font-size:1.1em; padding-top:14px; margin-top:6px; }
+.fg { margin-bottom:18px; }
+.fg label { display:block; color:#94a3b8; font-size:0.9em; margin-bottom:6px; }
+.fg input {
+    width:100%; padding:12px 16px; border-radius:10px; border:1px solid #334155;
+    background:#0f172a; color:#fff; font-size:1em; outline:none; transition:border 0.2s;
+}
+.fg input:focus { border-color:#818cf8; }
+.card-row { display:flex; gap:16px; }
+.card-row .fg { flex:1; }
+.dummy-note { background:rgba(139,92,246,0.1); border:1px solid rgba(139,92,246,0.3); padding:12px 16px; border-radius:10px; color:#c084fc; font-size:0.85em; margin-bottom:20px; text-align:center; }
+.btn-pay {
+    width:100%; padding:15px; border:none; border-radius:12px;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed); color:#fff; font-size:1.1em;
+    font-weight:600; cursor:pointer; transition:all 0.3s;
+}
+.btn-pay:hover { box-shadow:0 6px 28px rgba(99,102,241,0.45); transform:translateY(-2px); }
+.secure { text-align:center; color:#64748b; font-size:0.82em; margin-top:14px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="step-bar"><div class="step active"></div><div class="step active"></div><div class="step active"></div></div>
+  <h2>💳 <span>Payment</span></h2>
+
+  <div class="order-summary">
+    <div class="order-row"><span>Plan</span><span>{{ plan.name|title }}</span></div>
+    <div class="order-row"><span>Interviews / month</span><span>{{ plan.interviews_per_month }}</span></div>
+    <div class="order-row"><span>Company</span><span>{{ company_data.name }}</span></div>
+    <div class="order-row"><span>Total</span><span>${{ plan.price }}</span></div>
+  </div>
+
+  <div class="dummy-note">🛡️ This is a demo payment form. No real money is charged.</div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div class="fg"><label>Card Number</label><input type="text" name="card_number" placeholder="4242 4242 4242 4242" maxlength="19" oninput="formatCard(this)"></div>
+    <div class="fg"><label>Name on Card</label><input type="text" name="card_name" placeholder="John Doe"></div>
+    <div class="card-row">
+      <div class="fg"><label>Expiry</label><input type="text" name="expiry" placeholder="MM / YY" maxlength="7"></div>
+      <div class="fg"><label>CVV</label><input type="text" name="cvv" placeholder="123" maxlength="3"></div>
+    </div>
+    <button type="submit" class="btn-pay">Pay ${{ plan.price }} & Register</button>
+  </form>
+  <p class="secure">🔒 Simulated secure payment — demo only</p>
+</div>
+
+<script>
+function formatCard(el) {
+    let v = el.value.replace(/\D/g,'');
+    el.value = v.replace(/(.{4})/g,'$1 ').trim();
+}
+</script>
+</body>
+</html>

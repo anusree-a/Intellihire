@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Cancelled</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        .icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #d63031;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            font-size: 1.2em;
+            color: #6c757d;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .info-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .info-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .reason {
+            color: #856404;
+            font-style: italic;
+        }
+        
+        .meta-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🚫</div>
+        <h1>Interview Cancelled</h1>
+        <p>We're sorry, <strong>{{ session.candidate_name }}</strong>, but this interview has been cancelled by our HR team.</p>
+        
+        {% if session.cancellation_reason %}
+        <div class="info-box">
+            <div class="info-title">📋 Cancellation Reason:</div>
+            <div class="reason">{{ session.cancellation_reason }}</div>
+        </div>
+        {% endif %}
+        
+        <div class="meta-info">
+            <strong>Cancelled by:</strong> {{ session.cancelled_by }}<br>
+            <strong>Cancelled on:</strong> {{ session.cancelled_at|date:"F j, Y, g:i a" }}
+        </div>
+        
+        <p style="margin-top: 30px; font-size: 1em; color: #6c757d;">
+            If you have any questions, please contact our HR department at <strong>{{ session.email }}</strong>.
+        </p>
+    </div>
+</body>
+</html>
